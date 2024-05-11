@@ -1,6 +1,17 @@
 spring:
+  datasource:
+    username: debuggeandoideas
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+    url: jdbc:postgresql://localhost:5432/companies
+    password: udemy
   application:
     name: companies-crud
+  profiles:
+    default: default
+  config:
+    import: "optional:configserver:http://localhost:7777"
 logging:
   level:
     org:
@@ -13,7 +24,7 @@ logging:
 server:
   servlet:
     context-path: /companies-crud
-  port: 0
+  port: 8081
 
 eureka:
   instance:
