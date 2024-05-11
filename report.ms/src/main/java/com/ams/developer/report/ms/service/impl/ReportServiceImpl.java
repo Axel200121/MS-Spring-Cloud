@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class ReportServiceImpl implements ReportService {
 
     private final CompaniesRepository companiesRepository;
-    private final EurekaClient eurekaClient;
 
     @Override
     public String makeReport(String nameCompany) {
