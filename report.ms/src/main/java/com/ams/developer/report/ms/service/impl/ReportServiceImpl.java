@@ -2,7 +2,6 @@ package com.ams.developer.report.ms.service.impl;
 
 import com.ams.developer.report.ms.repository.CompaniesRepository;
 import com.ams.developer.report.ms.service.ReportService;
-import com.netflix.discovery.EurekaClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String makeReport(String nameCompany) {
-        return "";
+        return  this.companiesRepository.getByName(nameCompany).orElseThrow().getName();
+
     }
 
     @Override
