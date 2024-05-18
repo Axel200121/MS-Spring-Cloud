@@ -1,8 +1,0 @@
-spring:
-  datasource:
-    route: jdbc:postgresql://localhost:5432/companies
-    user: debuggeandoideas
-    pass: udemy
-    hikari:
-      timeout: 20000
-      pool-size: 5

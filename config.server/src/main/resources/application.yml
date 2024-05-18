@@ -7,7 +7,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Axel200121/MS-Spring-Cloud.git
+          uri: https://github.com/Axel200121/Microservice-Config.git
           default-label: main
           clone-on-start: true
 
