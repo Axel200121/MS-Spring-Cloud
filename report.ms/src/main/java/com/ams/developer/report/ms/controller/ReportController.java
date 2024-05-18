@@ -26,4 +26,10 @@ public class ReportController {
     public ResponseEntity<String> postReport(@RequestBody String report){
         return  ResponseEntity.ok(this.reportService.saveReport(report));
     }
+
+    @DeleteMapping(path = "{name}")
+    public ResponseEntity<Void> deleteReport(@PathVariable String name){
+        this.reportService.deleteReport(name);
+        return  ResponseEntity.noContent().build();
+    }
 }
