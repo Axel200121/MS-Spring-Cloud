@@ -3,10 +3,12 @@ package com.ams.developer.report.ms.service.impl;
 import com.ams.developer.report.ms.helpers.ReportHelper;
 import com.ams.developer.report.ms.models.Company;
 import com.ams.developer.report.ms.models.WebSite;
+import com.ams.developer.report.ms.repository.CompaniesFallBackRepository;
 import com.ams.developer.report.ms.repository.CompaniesRepository;
 import com.ams.developer.report.ms.service.ReportService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,10 +23,13 @@ public class ReportServiceImpl implements ReportService {
 
     private final CompaniesRepository companiesRepository;
     private final ReportHelper reportHelper;
+    private final CompaniesFallBackRepository companiesFallBackRepository;
+    private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public String makeReport(String nameCompany) {
-        return  reportHelper.readTemplate(this.companiesRepository.getByName(nameCompany).orElseThrow());
+        var circuitBreaker = this.circuitBreakerFactory.create("companies-circuit-breaker");
+        return circuitBreaker.run(()->this.makeReportMain(nameCompany), throwable->this.makeReportFallBack(nameCompany,throwable));
     }
 
     @Override
@@ -47,5 +52,14 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void deleteReport(String nameReport) {
         this.companiesRepository.deleteByName(nameReport);
+    }
+
+    private String makeReportMain(String nameCompany) {
+        return  reportHelper.readTemplate(this.companiesRepository.getByName(nameCompany).orElseThrow());
+    }
+
+    private String makeReportFallBack(String nameCompany, Throwable throwable) {
+        log.warn(throwable.getMessage());
+        return  reportHelper.readTemplate(this.companiesFallBackRepository.getCompany(nameCompany));
     }
 }
